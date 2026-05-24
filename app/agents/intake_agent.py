@@ -23,8 +23,17 @@ def run_intake_agent(state: ClaimState) -> ClaimState:
     }
     
     if missing_fields:
+        state.retry_counts["intake"] += 1
         state.status = "MISSING_INFORMATION"
         state.audit_trail.append(f"Intake Agent found missing fields: Missing fields: {missing_fields}")
+        if state.retry_counts["intake"] >= state.max_retries["intake"]:
+            state.status = "INTAKE_FAILED"
+            state.errors.append(
+                "Maximum intake retries exceeded"
+            )
+            state.audit_trail.append(
+                "Intake workflow failed because retry limit was exceeded"
+            )
         
     else:
         state.status = "INTAKE_COMPLETED"

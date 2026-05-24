@@ -22,4 +22,14 @@ class ClaimState(BaseModel):
         }
     )
     
+    max_retries: Dict[str, int] = Field(
+        default_factory=lambda: {
+            "intake": 3,
+            "fraud": 3,
+            "payout": 3,
+            "decision": 1,
+        }
+    )
+
+    
     audit_trail: List[str] = Field(default_factory=list)
