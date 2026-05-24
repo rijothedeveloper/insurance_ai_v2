@@ -7,5 +7,5 @@ app = FastAPI()
 
 @app.post("/process_claim")
 def create_claim(claim: ClaimRequest):
-    result = process_claim(claim.model_dump())
-    return result   
+    state = process_claim(claim.model_dump())
+    return state   

@@ -1,30 +1,33 @@
-from openai import OpenAI
-import os
+from app.schemas.state_schema import ClaimState
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
-)
-
-def run_intake_agent(claim):
-    prompt = f"""
-    Analyse this insurance claim.
+def run_intake_agent(state: ClaimState) -> ClaimState:
+    claim = state.claim
+    missing_fields = []
+    required_fields = [
+        "claim_id",
+        "customer_id",
+        "incident_description",
+        "estimated_damage",
+    ]
     
-    Claim:
-    {claim}
+    for field in required_fields:
+        if field not in claim or claim[field] in [None, ""]:
+            missing_fields.append(field)
+            
+    completeness_score = 1 - (len(missing_fields) / len(required_fields))
     
-    Return:
-    - completeness score
-    - missing fields
-    - summary
-    """
+    state.intake_agent_result = {
+        "missing_fields": missing_fields,
+        "completeness_score": completeness_score,
+        "is_complete": len(missing_fields) == 0
+    }
     
-    response = client.chat.completions.create(
-        model="gpt-4.1-mini",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
-    return response.choices[0].message.content
+    if missing_fields:
+        state.status = "MISSING_INFORMATION"
+        state.audit_trail.append(f"Intake Agent found missing fields: Missing fields: {missing_fields}")
+        
+    else:
+        state.status = "INTAKE_COMPLETED"
+        state.audit_trail.append("Intake Agent completed SUCCESSFULLY")
+        
+    return state
