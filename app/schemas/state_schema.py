@@ -31,5 +31,6 @@ class ClaimState(BaseModel):
         }
     )
 
-    
+    tool_results: Dict[str, Any] = Field(default_factory=dict)
+    tool_audit_trail: List[Dict[str, Any]] = Field(default_factory=list)
     audit_trail: List[str] = Field(default_factory=list)

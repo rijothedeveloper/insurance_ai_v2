@@ -1,12 +1,43 @@
-from sqlalchemy import Column, Integer, String, Float
+from datetime import datetime
+
+from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy.dialects.postgresql import JSONB
+
 from app.database.database import Base
 
-class Claim(Base):
-    __tablename__ = "claims"
+
+class ClaimStateRecord(Base):
+    __tablename__ = "claim_states"
 
     id = Column(Integer, primary_key=True, index=True)
-    claim_id = Column(String)
-    customer_id = Column(String)
-    incident_description = Column(String)
-    estimated_damage = Column(Float)
-    status = Column(String)
+
+    claim_id = Column(
+        String,
+        unique=True,
+        index=True,
+        nullable=False,
+    )
+
+    status = Column(
+        String,
+        nullable=False,
+        default="RECEIVED",
+    )
+
+    state_json = Column(
+        JSONB,
+        nullable=False,
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.now,
+        nullable=False,
+    )
+
+    updated_at = Column(
+        DateTime,
+        default=datetime.now,
+        onupdate=datetime.now,
+        nullable=False,
+    )

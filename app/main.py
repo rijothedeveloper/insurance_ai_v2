@@ -1,8 +1,11 @@
 from fastapi import FastAPI, HTTPException
+from app.database.database import Base, engine
 
 from app.memory.state_store import get_state, update_claim_data
 from app.schemas.claim_schemas import ClaimRequest, ClaimUpdateRequest
 from app.services.orchestrator import process_new_claim, run_workflow_from_state
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 

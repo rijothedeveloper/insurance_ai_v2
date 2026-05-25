@@ -36,6 +36,8 @@ def run_workflow_from_state(state: ClaimState) -> dict:
     state = run_payout_agent(state)
     state = run_decision_agent(state)
     state.audit_trail.append("Claim workflow completed") 
+    
+    save_state(state)
         
     print_state_summary(state)
        
