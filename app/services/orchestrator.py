@@ -2,6 +2,7 @@ from app.agents.intake_agent import run_intake_agent
 from app.agents.fraud_agent import run_fraud_agent
 from app.agents.payout_agent import run_payout_agent
 from app.agents.decision_agent import run_decision_agent
+from app.agents.communication_agent import run_communication_agent
 from app.memory.state_store import save_state
 from app.schemas.state_schema import ClaimState
 from app.utils.state_printer import print_state_summary
@@ -35,6 +36,7 @@ def run_workflow_from_state(state: ClaimState) -> dict:
     state = run_fraud_agent(state)
     state = run_payout_agent(state)
     state = run_decision_agent(state)
+    state = run_communication_agent(state)
     state.audit_trail.append("Claim workflow completed") 
     
     save_state(state)

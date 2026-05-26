@@ -8,6 +8,7 @@ class ClaimState(BaseModel):
     fraud_agent_result: Optional[Dict[str, Any]] = None
     payout_agent_result: Optional[Dict[str, Any]] = None
     decision_agent_result: Optional[Dict[str, Any]] = None
+    communication_result: Optional[Dict[str, Any]] = None
     
     human_review: Optional[Dict[str, Any]] = None
     requires_human_review: bool = False

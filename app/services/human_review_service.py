@@ -1,5 +1,6 @@
 from app.memory.state_store import get_state, list_human_review_states, save_state
 from app.schemas.state_schema import ClaimState
+from app.agents.communication_agent import run_communication_agent
 
 
 VALID_HUMAN_DECISIONS = {
@@ -96,6 +97,8 @@ def apply_human_review_decision(
             f"Human review comments: {comments}"
         )
 
+    state = run_communication_agent(state)
+    
     save_state(state)
 
     return state

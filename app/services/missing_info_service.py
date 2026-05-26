@@ -11,6 +11,7 @@ def build_missing_info_response(state: ClaimState) -> dict:
         "retry_count": state.retry_counts["intake"],
         "max_retries": state.max_retries["intake"],
         "claim": state.claim,
+        "communication_result": state.communication_result,
         "audit_trail": state.audit_trail,
         "errors": state.errors,
     }
