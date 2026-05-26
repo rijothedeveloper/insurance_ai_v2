@@ -11,3 +11,8 @@ class ClaimUpdateRequest(BaseModel):
     customer_id: Optional[str] = None
     incident_description: Optional[str] = None
     estimated_damage: Optional[float] = None
+    
+class HumanReviewDecisionRequest(BaseModel):
+    decision: str
+    reviewer_id: str
+    comments: Optional[str] = None

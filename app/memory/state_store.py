@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from app.database.database import SessionLocal
 from app.database.models import ClaimStateRecord
 from app.schemas.state_schema import ClaimState
@@ -70,3 +70,21 @@ def update_claim_data(claim_id: str, new_data: dict) -> ClaimState:
     save_state(state)
 
     return state
+
+def list_human_review_states() -> List[ClaimState]:
+    db = SessionLocal()
+
+    try:
+        records = (
+            db.query(ClaimStateRecord)
+            .filter(ClaimStateRecord.status == "HUMAN_REVIEW")
+            .all()
+        )
+
+        return [
+            ClaimState(**record.state_json)
+            for record in records
+        ]
+
+    finally:
+        db.close()

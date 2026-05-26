@@ -9,6 +9,10 @@ class ClaimState(BaseModel):
     payout_agent_result: Optional[Dict[str, Any]] = None
     decision_agent_result: Optional[Dict[str, Any]] = None
     
+    human_review: Optional[Dict[str, Any]] = None
+    requires_human_review: bool = False
+    decision_result: Optional[Dict[str, Any]] = None
+    
     status: str = "RECEIVED"
     
     errors: List[str] = Field(default_factory=list)
@@ -33,4 +37,10 @@ class ClaimState(BaseModel):
 
     tool_results: Dict[str, Any] = Field(default_factory=dict)
     tool_audit_trail: List[Dict[str, Any]] = Field(default_factory=list)
+    degraded_mode: bool = False
+
+    fallback_used: List[str] = Field(default_factory=list)
+
+    confidence_scores: Dict[str, float] = Field(default_factory=dict)
+
     audit_trail: List[str] = Field(default_factory=list)
