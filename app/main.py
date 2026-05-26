@@ -5,6 +5,7 @@ from app.memory.state_store import get_state, update_claim_data
 from app.schemas.claim_schemas import ClaimRequest, ClaimUpdateRequest, HumanReviewDecisionRequest
 from app.services.orchestrator import process_new_claim, run_workflow_from_state
 from app.services.human_review_service import apply_human_review_decision, get_human_review_queue
+from app.services.workflow_event_service import list_workflow_events
 
 Base.metadata.create_all(bind=engine)
 
@@ -62,3 +63,10 @@ def submit_human_review_decision(
             status_code=400,
             detail=str(error),
         )
+        
+@app.get("/claims/{claim_id}/events")
+def get_claim_events(claim_id: str):
+    return {
+        "claim_id": claim_id,
+        "events": list_workflow_events(claim_id),
+    }

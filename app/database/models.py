@@ -41,3 +41,52 @@ class ClaimStateRecord(Base):
         onupdate=datetime.now,
         nullable=False,
     )
+    
+class WorkflowEventRecord(Base):
+    __tablename__ = "workflow_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    claim_id = Column(
+        String,
+        index=True,
+        nullable=False,
+    )
+
+    event_type = Column(
+        String,
+        index=True,
+        nullable=False,
+    )
+
+    agent_name = Column(
+        String,
+        nullable=True,
+    )
+
+    tool_name = Column(
+        String,
+        nullable=True,
+    )
+
+    status = Column(
+        String,
+        nullable=False,
+        default="SUCCESS",
+    )
+
+    latency_ms = Column(
+        Integer,
+        nullable=True,
+    )
+
+    payload_json = Column(
+        JSONB,
+        nullable=True,
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False,
+    )

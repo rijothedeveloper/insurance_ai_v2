@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional
 
 from app.schemas.state_schema import ClaimState
+from app.services.workflow_event_service import log_workflow_event
 
 
 def record_tool_call(
@@ -23,6 +24,16 @@ def record_tool_call(
 
     if tool_output is not None:
         state.tool_results[tool_name] = tool_output
+
+    claim_id = state.claim.get("claim_id")
+
+    log_workflow_event(
+        claim_id=claim_id,
+        event_type="TOOL_CALLED",
+        tool_name=tool_name,
+        status=status,
+        payload_json=audit_record,
+    )
 
     if status == "SUCCESS":
         state.audit_trail.append(

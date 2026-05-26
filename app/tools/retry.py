@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, Tuple
 
 from app.schemas.state_schema import ClaimState
+from app.services.workflow_event_service import log_workflow_event
 from app.tools.tool_audit import record_tool_call
 
 
@@ -37,6 +38,18 @@ def call_tool_with_retries(
         except Exception as error:
             last_error = error
             state.retry_counts[retry_key] += 1
+
+            log_workflow_event(
+                claim_id=state.claim.get("claim_id"),
+                event_type="RETRY_OCCURRED",
+                tool_name=tool_name,
+                status="FAILED",
+                payload_json={
+                    "attempt": attempt,
+                    "max_retries": max_retries,
+                    "error": str(error),
+                },
+            )
 
             state = record_tool_call(
                 state=state,

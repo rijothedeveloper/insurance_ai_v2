@@ -1,4 +1,5 @@
 from app.schemas.state_schema import ClaimState
+from app.services.workflow_event_service import log_workflow_event
 from app.tools.fraud_check_tool import check_fraud, fallback_fraud_check
 from app.tools.retry import call_tool_with_retries
 from app.tools.tool_audit import record_tool_call
@@ -25,6 +26,18 @@ def run_fraud_agent(state: ClaimState) -> ClaimState:
         state.errors.append(str(error))
         state.degraded_mode = True
         state.fallback_used.append("cached_fraud_model")
+        
+        log_workflow_event(
+        claim_id=state.claim.get("claim_id"),
+        event_type="FALLBACK_USED",
+        tool_name="cached_fraud_model",
+        status="FALLBACK",
+        payload_json={
+            "failed_tool": "fraud_check",
+            "fallback": "cached_fraud_model",
+            "error": str(error),
+        },
+    )
 
         state.audit_trail.append(
             "Fraud API failed. Using cached fraud model fallback."
